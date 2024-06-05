@@ -2,7 +2,9 @@ import logging
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from config import API_TOKEN
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from parse import fetch_crypto_prices
+from database import init_db, get_subscriber, remove_subscriber, add_subscriber
 
 #   Configuring logging
 logging.basicConfig(level=logging.INFO)
@@ -10,6 +12,9 @@ logging.basicConfig(level=logging.INFO)
 # Initialising the bot and dispatcher
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
+
+# Database initialisation
+init_db()
 
 
 # Command start
