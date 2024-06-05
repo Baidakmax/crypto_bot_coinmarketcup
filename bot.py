@@ -33,8 +33,40 @@ async def get_prices(message: types.Message):
     await message.reply(response_message)
 
 
+#  Command subscribe
+@dp.message(Command("subscribe"))
+async def subscribe(message: types.Message):
+    user_id = message.from_user.id
+    add_subscriber(user_id)
+    await message.reply("You are subscribed to daily updates on cryptocurrency rates.")
+
+
+# Command unsubscribe
+@dp.message(Command("unsubscribe"))
+async def unsubscribe(message: types.Message):
+    user_id = message.from_user.id
+    remove_subscriber(user_id)
+    await message.reply("You're unsubscribed from daily updates on cryptocurrency rates.")
+
+
+# Function for sending daily notifications
+async def send_daily_updates():
+    subscribes = get_subscriber()
+    crypto_data = fetch_crypto_prices()
+    responce_message = "\n".join([
+        f"{item['name']}: {item['price']} "
+        f"(Volume: {item['volume']}, "
+        f"Market Cap: {item['market_cap']})" for item in crypto_data])
+    for user_id in subscribes:
+        await bot.send_message(user_id, responce_message)
+
+
 # Starting bot
 async def main():
+    # task scheduler configuration
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(send_daily_updates, 'interval', hours=24)
+    scheduler.start()
     await dp.start_polling(bot)
 
 
