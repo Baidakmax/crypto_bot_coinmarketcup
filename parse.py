@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def fetch_crypto_prices():
+def fetch_crypto_prices(limit=10):
     """
     Fetches the current prices, volumes, and market caps of the top 10 cryptocurrencies from CoinMarketCap.
 
@@ -29,7 +29,7 @@ def fetch_crypto_prices():
         print("Table not found")
         return crypto_data
 
-    rows = table.find_all('tr')[1:11]  # Skip the header and parse the first 10 cryptocurrencies
+    rows = table.find_all('tr')[1:limit + 1]  # Skip the header and parse the first 10 cryptocurrencies
 
     for row in rows:
         cols = row.find_all('td')
@@ -56,16 +56,40 @@ def fetch_crypto_prices():
     return crypto_data
 
 
-# # Parsing testing
+def fetch_crypto_by_name(name):
+    """
+    Fetches the current price, volume, and market cap of a specific cryptocurrency by its name.
+
+    Args:
+        name (str): The name of the cryptocurrency to search for.
+
+    Returns:
+        dict: A dictionary containing the following keys:
+            - 'name' (str): The name of the cryptocurrency.
+            - 'price' (str): The current price of the cryptocurrency.
+            - 'volume' (str): The 24-hour trading volume of the cryptocurrency.
+            - 'market_cap' (str): The market capitalization of the cryptocurrency.
+            If the cryptocurrency is not found, returns an empty dictionary.
+    """
+    all_data = fetch_crypto_prices(limit=100)  # Fetch a larger set of data to include more cryptocurrencies
+    for crypto in all_data:
+        if crypto['name'].lower() == name.lower():
+            return crypto
+    return {}
+
+## Testing the parsing functions
 # if __name__ == "__main__":
+#     # Test top 10 cryptocurrencies
 #     data = fetch_crypto_prices()
 #     if data:
 #         for item in data:
-#             print(
-#                 f"Name: {item['name']}, "
-#                 f"Price: {item['price']}, "
-#                 f"Volume: {item['volume']}, "
-#                 f"Market Cap: {item['market_cap']}"
-#             )
+#             print(f"Name: {item['name']}, Price: {item['price']}, Volume: {item['volume']}, Market Cap: {item['market_cap']}")
 #     else:
 #         print("No data found or parsing failed.")
+#
+#     # Test fetching a specific cryptocurrency by name
+#     specific_crypto = fetch_crypto_by_name("Sola")
+#     if specific_crypto:
+#         print(f"\nSpecific Crypto:\nName: {specific_crypto['name']}, Price: {specific_crypto['price']}, Volume: {specific_crypto['volume']}, Market Cap: {specific_crypto['market_cap']}")
+#     else:
+#         print("Cryptocurrency not found.")
