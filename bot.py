@@ -122,7 +122,10 @@ async def process_top5_callback(callback_query: types.CallbackQuery):
     crypto = next((item for item in data if item['name'] == crypto_name), None)
     if crypto:
         response = (
-            f"Name: {crypto['name']}\nPrice: {crypto['price']}\nVolume: {crypto['volume']}\nMarket Cap: {crypto['market_cap']}")
+            f"Name: {crypto['name']}\n"
+            f"Price: {crypto['price']}\n"
+            f"Volume: {crypto['volume']}\n"
+            f"Market Cap: {crypto['market_cap']}")
         await bot.send_message(callback_query.from_user.id, response)
     else:
         await bot.send_message(callback_query.from_user.id, "Cryptocurrency not found.")
@@ -130,12 +133,28 @@ async def process_top5_callback(callback_query: types.CallbackQuery):
 
 @dp.message(Command("search_10"))
 async def ask_for_crypto_name_10(message: types.Message, state: FSMContext):
+    """
+    Handler for the /search_10 command.
+    Prompts the user to enter the name of the cryptocurrency they want to search in the top 10.
+
+    Args:
+        message (types.Message): The message object containing the command.
+        state (FSMContext): The FSM context for managing states.
+    """
     await message.answer("Enter the name of the cryptocurrency you want to search (Top 10):")
     await state.set_state(CryptoStates.waiting_for_crypto_name_10)
 
 
 @dp.message(CryptoStates.waiting_for_crypto_name_10)
 async def search_crypto_by_name_10(message: types.Message, state: FSMContext):
+    """
+        Handler for searching a cryptocurrency in the top 10 by name.
+        Fetches and returns the cryptocurrency information based on user input.
+
+        Args:
+            message (types.Message): The message object containing the user's response.
+            state (FSMContext): The FSM context for managing states.
+        """
     crypto_name = message.text.strip()
     crypto = fetch_crypto_by_name_first_ten(crypto_name)
     if crypto:
@@ -150,18 +169,35 @@ async def search_crypto_by_name_10(message: types.Message, state: FSMContext):
 
 @dp.message(Command("search_100"))
 async def ask_for_crypto_name_100(message: types.Message, state: FSMContext):
+    """
+        Handler for the /search_100 command.
+        Prompts the user to enter the name of the cryptocurrency they want to search in the rank 11-100.
+
+        Args:
+            message (types.Message): The message object containing the command.
+            state (FSMContext): The FSM context for managing states.
+        """
     await message.answer("Enter the name of the cryptocurrency you want to search (Rank 11-100):")
     await state.set_state(CryptoStates.waiting_for_crypto_name_100)
 
 
 @dp.message(CryptoStates.waiting_for_crypto_name_100)
 async def search_crypto_by_name_100(message: types.Message, state: FSMContext):
+    """
+        Handler for searching a cryptocurrency ranked 11-100 by name.
+        Fetches and returns the cryptocurrency information based on user input.
+
+        Args:
+            message (types.Message): The message object containing the user's response.
+            state (FSMContext): The FSM context for managing states.
+        """
     crypto_name = message.text.strip()
     crypto = fetch_crypto_by_name_11_to_100(crypto_name)
     if crypto:
         await message.answer(f"Name: {crypto['name']}\nPrice: {crypto['price']}")
     else:
-        await message.answer("Cryptocurrency not found in the ranks 11-100. Please check the name and try again /search_100.")
+        await message.answer("Cryptocurrency not found in the ranks 11-100. "
+                             "Please check the name and try again /search_100.")
     await state.clear()
 
 
