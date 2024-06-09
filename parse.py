@@ -56,7 +56,7 @@ def fetch_crypto_prices(limit=10):
     return crypto_data
 
 
-def fetch_crypto_by_name(name):
+def fetch_crypto_by_name_first_ten(name):
     """
     Fetches the current price, volume, and market cap of a specific cryptocurrency by its name.
 
@@ -71,25 +71,58 @@ def fetch_crypto_by_name(name):
             - 'market_cap' (str): The market capitalization of the cryptocurrency.
             If the cryptocurrency is not found, returns an empty dictionary.
     """
-    all_data = fetch_crypto_prices(limit=100)  # Fetch a larger set of data to include more cryptocurrencies
+    all_data = fetch_crypto_prices(limit=10)  # Fetch a larger set of data to include more cryptocurrencies
     for crypto in all_data:
         if crypto['name'].lower() == name.lower():
             return crypto
     return {}
 
-## Testing the parsing functions
-# if __name__ == "__main__":
-#     # Test top 10 cryptocurrencies
-#     data = fetch_crypto_prices()
-#     if data:
-#         for item in data:
-#             print(f"Name: {item['name']}, Price: {item['price']}, Volume: {item['volume']}, Market Cap: {item['market_cap']}")
-#     else:
-#         print("No data found or parsing failed.")
-#
-#     # Test fetching a specific cryptocurrency by name
-#     specific_crypto = fetch_crypto_by_name("Sola")
-#     if specific_crypto:
-#         print(f"\nSpecific Crypto:\nName: {specific_crypto['name']}, Price: {specific_crypto['price']}, Volume: {specific_crypto['volume']}, Market Cap: {specific_crypto['market_cap']}")
-#     else:
-#         print("Cryptocurrency not found.")
+
+def fetch_crypto_by_name_11_to_100(name):
+    """
+    Fetches the current price of a specific cryptocurrency by its name from the 11th to the 100th position.
+
+    Args:
+        name (str): The name of the cryptocurrency to search for.
+
+    Returns:
+        dict: A dictionary containing the following keys:
+            - 'name' (str): The name of the cryptocurrency.
+            - 'price' (str): The current price of the cryptocurrency.
+            If the cryptocurrency is not found, returns an empty dictionary.
+    """
+    url = 'https://coinmarketcap.com/'
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'lxml')
+
+    table = soup.find('table', class_='cmc-table')
+    # if not table:
+    #     print("Table not found")
+    #     return {}
+
+    rows = table.find_all('tr')[12:101]  # Parse the 11th to 100th cryptocurrencies
+
+    for row in rows:
+        cols = row.find_all('td')
+
+        # if len(cols) < 5:
+        #     continue  # Skip rows with insufficient number of columns
+
+        name_tag = cols[2].find('a', class_='cmc-link')
+        price_tag = cols[3].text
+
+        name_spans = name_tag.find_all('span')
+
+        crypto_name = name_spans[1].text
+        print(crypto_name)
+        price = price_tag if price_tag else 'N/A'
+
+        if crypto_name.lower() == name.lower():
+            return {
+                'name': crypto_name,
+                'price': price
+            }
+
+    return {}
+
+
