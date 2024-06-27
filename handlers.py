@@ -176,9 +176,11 @@ def register_handlers(dp: Dispatcher, bot: Bot):
         - send_prices: Handles the /prices command to send current cryptocurrency prices.
         - send_menu: Handles the /top5 command to display the top 5 cryptocurrencies.
         - process_top5_callback: Handles callbacks for the top 5 cryptocurrency buttons.
-        - ask_for_crypto_name_10: Handles the /search_10 command to prompt the user for a cryptocurrency name within the top 10.
+        - ask_for_crypto_name_10: Handles the /search_10 command to prompt the user for a cryptocurrency name within
+         the top 10.
         - search_crypto_by_name_10: Handles user input for searching a cryptocurrency within the top 10.
-        - ask_for_crypto_name_100: Handles the /search_100 command to prompt the user for a cryptocurrency name within the top 100.
+        - ask_for_crypto_name_100: Handles the /search_100 command to prompt the user for a cryptocurrency name within
+        the top 100.
         - search_crypto_by_name_100: Handles user input for searching a cryptocurrency within the top 100.
         - subscribe: Handles the /subscribe command to subscribe the user for daily updates.
         - unsubscribe: Handles the /unsubscribe command to unsubscribe the user from daily updates.
